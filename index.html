@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Survivors - Play the Ultimate Survival Game Online</title>
+    <meta name="description" content="Play Monster Survivors online - an exciting survival game where you battle endless waves of monsters. Experience intense gameplay and upgrade your character to survive longer!">
+    <link rel="canonical" href="https://monstersurvivors.com" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apple-blue': '#007AFF',
+                        'apple-gray': '#8E8E93',
+                        'apple-dark': '#1D1D1F',
+                        'game-primary': '#FF3B30',
+                        'game-secondary': '#34C759',
+                        'game-accent': '#FF9500'
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('/assets/images/hero-bg.jpg')",
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 游戏主题颜色 */
+        :root {
+            --game-primary: #ff4d4d;
+            --game-secondary: #ff8533;
+            --game-accent: #ffd700;
+            --game-dark: #1a1a1a;
+            --game-darker: #0a0a0a;
+        }
+
+        /* 全局样式 */
+        body {
+            background-color: var(--game-darker);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--game-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--game-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--game-secondary);
+        }
+
+        /* 英雄区域样式 */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            text-shadow: 0 0 10px rgba(255,255,255,0.5),
+                         0 0 20px rgba(255,255,255,0.3),
+                         0 0 30px rgba(255,255,255,0.2);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(255,255,255,0.5),
+                             0 0 20px rgba(255,255,255,0.3),
+                             0 0 30px rgba(255,255,255,0.2);
+            }
+            to {
+                text-shadow: 0 0 15px rgba(255,255,255,0.6),
+                             0 0 25px rgba(255,255,255,0.4),
+                             0 0 35px rgba(255,255,255,0.3);
+            }
+        }
+
+        .hero-button {
+            background: linear-gradient(45deg, var(--game-primary), var(--game-secondary));
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(255,77,77,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .hero-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255,77,77,0.7);
+        }
+
+        /* 游戏卡片样式 */
+        .game-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            transition: all 0.3s ease;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .game-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            background: rgba(255,77,77,0.9);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* 点击波纹效果 */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform 0.5s, opacity 1s;
+        }
+
+        .ripple:active::after {
+            transform: scale(0, 0);
+            opacity: 0.3;
+            transition: 0s;
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .game-card {
+                margin: 10px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-button {
+                padding: 10px 20px;
+            }
+        }
+
+        /* 修改侧边栏样式 */
+        .sidebar {
+            width: 80px;
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .sidebar:hover {
+            width: 280px;
+        }
+
+        .sidebar .nav-text {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .nav-text {
+            opacity: 1;
+        }
+
+        .sidebar .nav-icon {
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #9CA3AF;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+            margin: 0.25rem 0;
+        }
+
+        .sidebar .nav-item:hover {
+            background-color: #374151;
+            color: var(--game-accent);
+        }
+
+        .sidebar .nav-item.active {
+            background-color: #374151;
+            color: var(--game-accent);
+        }
+
+        /* 调整主内容区域边距 */
+        @media (min-width: 768px) {
+            .md\:ml-\[280px\] {
+                margin-left: 80px;
+            }
+        }
+
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+        }
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        .game-card {
+            transition: all 0.3s ease;
+        }
+        .game-card:hover {
+            transform: scale(1.02);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-black/80 backdrop-blur-sm fixed w-full z-50">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="mr-4 md:hidden text-gray-300 hover:text-game-accent">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <a href="/" class="text-2xl font-bold text-game-primary hover:text-game-accent transition-colors">Monster Survivors</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="/categories" class="text-gray-300 hover:text-game-accent transition-colors">Categories</a>
+                    <a href="/games" class="text-gray-300 hover:text-game-accent transition-colors">Games</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-gray-800 pt-20 z-40">
+        <div class="p-4">
+            <h2 class="text-xl font-bold text-game-accent mb-4 text-center nav-text">Game Categories</h2>
+            <nav class="space-y-2">
+                <a href="/categories/action" class="nav-item" data-category="action">
+                    <span class="nav-icon">⚔️</span>
+                    <span class="nav-text">Action Games</span>
+                </a>
+                <a href="/categories/survival" class="nav-item" data-category="survival">
+                    <span class="nav-icon">🛡️</span>
+                    <span class="nav-text">Survival Games</span>
+                </a>
+                <a href="/categories/strategy" class="nav-item" data-category="strategy">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-text">Strategy Games</span>
+                </a>
+                <a href="/categories/adventure" class="nav-item" data-category="adventure">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-text">Adventure Games</span>
+                </a>
+                <a href="/categories/puzzle" class="nav-item" data-category="puzzle">
+                    <span class="nav-icon">🧩</span>
+                    <span class="nav-text">Puzzle Games</span>
+                </a>
+                <a href="/categories/arcade" class="nav-item" data-category="arcade">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-text">Arcade Games</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-0 lg:ml-20 transition-all duration-300">
+        <!-- Hero Section -->
+        <section class="hero-section relative h-[60vh] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80');">
+            <div class="hero-content relative h-full flex items-center justify-center text-center px-4">
+                <div class="max-w-3xl">
+                    <h1 class="hero-title text-4xl md:text-6xl font-bold mb-6">Discover Amazing Games</h1>
+                    <p class="text-xl md:text-2xl mb-8">Explore our collection of handpicked games across various categories</p>
+                    <a href="#featured" class="hero-button ripple inline-block text-white font-bold py-3 px-8 rounded-lg">
+                        Explore Games
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Games Section -->
+        <section id="featured" class="py-16 px-4 md:px-8">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8">Featured Games</h2>
+                <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Games will be dynamically rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+  
+
+    <script>
+        // 侧边栏切换
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // 点击侧边栏外部关闭侧边栏
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // 游戏数据
+        const games = [
+            {
+                id: 1,
+                title: 'Crazy Office: Slap and Smash!',
+                category: 'action',
+                image: 'https://imgs.crazygames.com/crazy-office-slap-and-smash_16x9/20250425071328/crazy-office-slap-and-smash_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Fast-paced action game with stunning graphics.',
+                iframeUrl: 'https://www.crazygames.com/embed/crazy-office-slap-and-smash'
+            },
+            {
+                id: 2,
+                title: 'Piece of Cake: Merge and Bake',
+                category: 'survival',
+                image: 'https://imgs.crazygames.com/piece-of-cake-merge-and-bake_16x9/20250528043012/piece-of-cake-merge-and-bake_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Survive in a harsh post-apocalyptic world.',
+                iframeUrl: 'https://www.crazygames.com/embed/piece-of-cake-merge-and-bake'
+            },
+            {
+                id: 3,
+                title: 'Doodle Road',
+                category: 'strategy',
+                image: 'https://imgs.crazygames.com/doodle-road_16x9/20240912101139/doodle-road_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Build your empire and conquer the world.',
+                iframeUrl: 'https://www.crazygames.com/embed/doodle-road'
+            },
+            {
+                id: 4,
+                title: 'Zombie Horde: Build & Survive',
+                category: 'adventure',
+                image: 'https://imgs.crazygames.com/zombie-horde-build-survive_16x9/20250602073747/zombie-horde-build-survive_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Embark on an epic journey through magical realms.',
+                iframeUrl: 'https://www.crazygames.com/embed/zombie-horde-build-survive'
+            },
+            {
+                id: 5,
+                title: 'Crazy Dummy Swing Multiplayer',
+                category: 'puzzle',
+                image: 'https://imgs.crazygames.com/games/crazy-dummy-swing-multiplayer/cover_16x9-1747406523876.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Challenge your mind with brain-teasing puzzles.',
+                iframeUrl: 'https://www.crazygames.com/embed/crazy-dummy-swing-multiplayer'
+            },
+            {
+                id: 6,
+                title: 'Boom Karts',
+                category: 'arcade',
+                image: 'https://imgs.crazygames.com/boom-karts_16x9/20250522041619/boom-karts_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+                description: 'Classic arcade fun with modern graphics.',
+                iframeUrl: 'https://www.crazygames.com/embed/boom-karts'
+            },
+    {
+        id: 8,
+        title: 'Dalgona Candy Honeycomb Cookie',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/dalgona-candy-honeycomb-cookie-kam_16x9/20250521050634/dalgona-candy-honeycomb-cookie-kam_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/dalgona-candy-honeycomb-cookie-kam'
+    },
+    {
+        id: 9,
+        title: 'Snake VS Block',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/snake-vs-block_16x9/20250528043518/snake-vs-block_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/snake-vs-block'
+    },
+    {
+        id: 10,
+        title: 'Color Music Hop Ball Games',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/color-music-hop-ball-games_16x9/20250526055219/color-music-hop-ball-games_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/color-music-hop-ball-games'
+    },
+    {
+        id: 11,
+        title: 'Empire City',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/empire-city_16x9/20250218035041/empire-city_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/empire-city'
+    },
+    {
+        id: 12,
+        title: 'Punchers',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/punchers_16x9/20241223161057/punchers_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/punchers'
+    },
+    {
+        id: 13,
+        title: 'Duo',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/duo-kjn_16x9/20250530054118/duo-kjn_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/duo-kjn'
+    },
+    {
+        id: 14,
+        title: 'Daily Emoji Hunt',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/daily-emoji-hunt_16x9/20250528063152/daily-emoji-hunt_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/daily-emoji-hunt'
+    },
+    {
+        id: 15,
+        title: 'Fork N Sausage',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/fork-n-sausage_16x9/20240517041857/fork-n-sausage_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/fork-n-sausage'
+    },
+    {
+        id: 16,
+        title: 'Zombie Space Episode 2',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/zombie-space-episode-2-ajp_16x9/20250515082821/zombie-space-episode-2-ajp_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/zombie-space-episode-2-ajp'
+    },
+    {
+        id: 17,
+        title: 'Derby Crash',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/games/derbycrash/cover_16x9-1748944881794.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/derbycrash'
+    },
+    {
+        id: 18,
+        title: 'Pottery Master',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/pottery-master_16x9/20250515024518/pottery-master_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/pottery-master'
+    },
+    {
+        id: 19,
+        title: 'Firestone Idle RPG',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/firestone-idle-rpg_16x9/20250529153314/firestone-idle-rpg_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/firestone-idle-rpg'
+    },
+    {
+        id: 20,
+        title: 'City Car Driving Simulator: Online',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/city-car-driving-simulator-online_16x9/20241202042756/city-car-driving-simulator-online_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Classic arcade fun with modern graphics.',
+        iframeUrl: 'https://www.crazygames.com/embed/city-car-driving-simulator-online'
+    },{
+        id: 21,
+        title: 'Diamant: Sky Stories Match 3',
+        category: 'puzzle',
+        image: 'https://imgs.crazygames.com/diamant-match-3-sky-story_16x9/20250603041201/diamant-match-3-sky-story_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/diamant-match-3-sky-story'
+    },
+    {
+        id: 22,
+        title: 'Pretty Tidy',
+        category: 'puzzle',
+        image: 'https://imgs.crazygames.com/pretty-tidy_16x9/20250410085808/pretty-tidy_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/pretty-tidy'
+    },
+    {
+        id: 23,
+        title: 'Blob Opera',
+        category: 'music',
+        image: 'https://imgs.crazygames.com/games/blob-opera/cover-1618230037270.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/blob-opera'
+    },
+    {
+        id: 24,
+        title: 'Image Crossword',
+        category: 'puzzle',
+        image: 'https://imgs.crazygames.com/image-crossword-far_16x9/20250522072522/image-crossword-far_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/image-crossword-far'
+    },
+    {
+        id: 25,
+        title: 'Animal DNA Run',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/animal-dna-run_16x9/20240228104047/animal-dna-run_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/animal-dna-run'
+    },
+    {
+        id: 26,
+        title: 'Exhibit of Sorrows',
+        category: 'adventure',
+        image: 'https://imgs.crazygames.com/exhibit-of-sorrows_16x9/20241217031706/exhibit-of-sorrows_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/exhibit-of-sorrows'
+    },
+    {
+        id: 27,
+        title: 'Cougar Simulator: Big Cats',
+        category: 'simulation',
+        image: 'https://imgs.crazygames.com/cougar-simulator-big-cats_16x9/20250423021919/cougar-simulator-big-cats_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/cougar-simulator-big-cats'
+    },
+    {
+        id: 28,
+        title: 'Screamals',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/screamals_16x9/20250513041357/screamals_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/screamals'
+    },
+    {
+        id: 29,
+        title: 'Pencil Rush',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/pencil-rush/20230215180735/pencil-rush-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/pencil-rush'
+    },
+    {
+        id: 30,
+        title: 'Layers Roll',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/layers-roll/20220822155054/layers-roll-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/layers-roll'
+    },
+    {
+        id: 31,
+        title: 'Scale of the Universe 2',
+        category: 'educational',
+        image: 'https://imgs.crazygames.com/games/scale-of-the-universe-2/cover-1632499805336.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/scale-of-the-universe-2'
+    },
+    {
+        id: 32,
+        title: 'HappyVille Merge Farm',
+        category: 'puzzle',
+        image: 'https://imgs.crazygames.com/happyville-merge-farm-gtu_16x9/20250603034228/happyville-merge-farm-gtu_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/happyville-merge-farm-gtu'
+    },
+    {
+        id: 33,
+        title: 'Obby Cards: The Legend Hunt',
+        category: 'adventure',
+        image: 'https://imgs.crazygames.com/obby-cards-the-legend-hunt_16x9/20250422044823/obby-cards-the-legend-hunt_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/obby-cards-the-legend-hunt'
+    },
+    {
+        id: 34,
+        title: 'I Don\'t Even Know',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/games/i-dont-even-know/cover-1629288308812.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/i-dont-even-know'
+    },
+    {
+        id: 35,
+        title: 'Knee Case Simulator',
+        category: 'simulation',
+        image: 'https://imgs.crazygames.com/knee-case-simulator_16x9/20250108081358/knee-case-simulator_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/knee-case-simulator'
+    },
+    {
+        id: 36,
+        title: 'Catch Tiles: Piano Game',
+        category: 'music',
+        image: 'https://imgs.crazygames.com/catch-tiles-piano-game_16x9/20240312081412/catch-tiles-piano-game_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/catch-tiles-piano-game'
+    },
+    {
+        id: 37,
+        title: 'Stupidity Test',
+        category: 'trivia',
+        image: 'https://imgs.crazygames.com/games/stupidity-test/cover-1630493120712.png?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/stupidity-test'
+    },
+    {
+        id: 38,
+        title: 'Just Hit the Button',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/just-hit-the-button/20230728104234/just-hit-the-button-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/just-hit-the-button'
+    },
+    {
+        id: 39,
+        title: 'Dogs vs Aliens',
+        category: 'action',
+        image: 'https://imgs.crazygames.com/dogs-vs-aliens_16x9/20250529073207/dogs-vs-aliens_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/dogs-vs-aliens'
+    },
+    {
+        id: 40,
+        title: 'Hydraulic Press 2D ASMR',
+        category: 'simulation',
+        image: 'https://imgs.crazygames.com/hydraulic-press-2d-asmr_16x9/20240709091657/hydraulic-press-2d-asmr_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/hydraulic-press-2d-asmr'
+    },
+    {
+        id: 41,
+        title: 'Merge Run',
+        category: 'arcade',
+        image: 'https://imgs.crazygames.com/merge-run_16x9/20231012081056/merge-run_16x9-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/merge-run'
+    },
+    {
+        id: 42,
+        title: 'Draw Line',
+        category: 'puzzle',
+        image: 'https://imgs.crazygames.com/draw-line/20221226202621/draw-line-cover?metadata=none&quality=40&width=1200&height=630&fit=crop',
+        description: 'Engaging match-3 puzzle adventure.',
+        iframeUrl: 'https://www.crazygames.com/embed/draw-line'
+    }
+        ];
+
+        // 分类映射
+        const categoryMap = {
+            'action': { name: 'Action Games', icon: '⚔️' },
+            'survival': { name: 'Survival Games', icon: '🛡️' },
+            'strategy': { name: 'Strategy Games', icon: '🎯' },
+            'adventure': { name: 'Adventure Games', icon: '🗺️' },
+            'puzzle': { name: 'Puzzle Games', icon: '🧩' },
+            'arcade': { name: 'Arcade Games', icon: '🎮' }
+        };
+
+        // 为导航项添加点击事件
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = item.getAttribute('data-category');
+                
+                // 移除所有导航项的激活状态
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('bg-gray-700', 'text-white');
+                    navItem.classList.add('text-gray-400');
+                });
+                
+                // 添加当前项的激活状态
+                item.classList.remove('text-gray-400');
+                item.classList.add('bg-gray-700', 'text-white');
+                
+                // 更新页面标题
+                document.querySelector('h2').textContent = categoryMap[category].name;
+                
+                // 渲染对应分类的游戏
+                renderGames(category);
+            });
+        });
+
+        // 渲染游戏列表
+        function renderGames(category = null) {
+            const container = document.getElementById('games-container');
+            const filteredGames = category ? games.filter(game => game.category === category) : games;
+            
+            container.innerHTML = filteredGames.map(game => `
+                <div class="game-card p-4 rounded-lg shadow-lg">
+                    <img src="${game.image}" alt="${game.title}" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold mb-2">${game.title}</h3>
+            
+                    <a href="games/monster-survivors.html?title=${encodeURIComponent(game.title)}&description=${encodeURIComponent(game.description)}&iframeUrl=${encodeURIComponent(game.iframeUrl)}" 
+                       class="block w-full text-center py-2 px-4 bg-game-primary text-white rounded-lg hover:bg-game-secondary transition-colors">
+                        Play Now
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => renderGames());
+    </script>
+</body>
+</html> 
